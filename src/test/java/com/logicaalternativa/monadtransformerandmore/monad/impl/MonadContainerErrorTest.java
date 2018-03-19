@@ -251,7 +251,7 @@ public class MonadContainerErrorTest {
         final Container<Error, String>  res = m.flatMap2(
           one,
           two,
-          ( o, t ) -> m.pure( String.format( "%n, %n", o, t )  )
+          ( o, t ) -> m.pure( String.format( "%s, %s", o, t )  )
         );
         
         assertEquals( "one, two" , res.getValue() );
@@ -267,7 +267,7 @@ public class MonadContainerErrorTest {
         final Container<Error, String> res = m.map2(
           one,
           two,
-          ( o, t ) ->  String.format( "%n, %n", o, t )
+          ( o, t ) ->  String.format( "%s, %s", o, t )
         
         );
         
@@ -286,7 +286,7 @@ public class MonadContainerErrorTest {
           one,
           two,
           three,
-          ( o, t, tt ) -> m.pure( String.format( "%n, %n, %n", o, t, tt )  )
+          ( o, t, tt ) -> m.pure( String.format( "%s, %s, %s", o, t, tt )  )
         );
         
         assertEquals( "one, two, three" , res.getValue() );
@@ -304,7 +304,7 @@ public class MonadContainerErrorTest {
           one,
           two,
           three,
-          ( o, t, tt ) ->  String.format( "%n, %n, %n", o, t, tt ) 
+          ( o, t, tt ) ->  String.format( "%s, %s, %s", o, t, tt )
         );
         
         assertEquals( "one, two, three" , res.getValue() );

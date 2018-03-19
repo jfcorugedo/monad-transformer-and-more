@@ -2,6 +2,7 @@ package com.logicaalternativa.monadtransformerandmore.monad;
 import static com.logicaalternativa.monadtransformerandmore.util.TDD.$_notYetImpl;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -30,20 +31,19 @@ public interface MonadContainer<E> {
 
 	default <A,T> Container<E, T> map( Container<E, A> from, Function<A, T> f ) {
 
-		return $_notYetImpl();
-
+		return flatMap(from, s -> pure(f.apply(s)));
 	}
 
 	default <T> Container<E, T> recover( Container<E, T> from, Function<E, T> f ) {
 
-		return $_notYetImpl();
+		return recoverWith(from, t -> pure(f.apply(t)));
 
 	}
 
 
 	default <T> Container<E, T> flatten( Container<E, Container<E, T>> from ) {
 
-		return $_notYetImpl();
+		return flatMap(from, f -> f);
 
 	}
 
@@ -51,7 +51,7 @@ public interface MonadContainer<E> {
 			Container<E, B> fromB, 
 			BiFunction<A,B,Container<E, T>> f  ) {
 
-		return $_notYetImpl();
+		return flatten(map2(fromA, fromB, f));
 
 	}
 
@@ -61,7 +61,7 @@ public interface MonadContainer<E> {
 			Container<E, B> fromB, 
 			BiFunction<A,B,T> f  ) {
 
-		return $_notYetImpl();
+		return flatMap(fromA, a -> map(fromB, b -> f.apply(a, b)));
 
 	}
 
@@ -71,7 +71,7 @@ public interface MonadContainer<E> {
 			Container<E, C> fromC, 
 			Function3<A,B,C,Container<E, T>> f  ) {
 
-		return $_notYetImpl();
+		return flatten(map3(fromA, fromB, fromC, f));
 
 	}
 
@@ -80,19 +80,30 @@ public interface MonadContainer<E> {
 			Container<E, C> fromC, 
 			Function3<A,B,C,T> f  ) {
 
-		return $_notYetImpl();
+		return flatMap(fromA, a -> map2(fromB, fromC, (b, c)-> f.apply(a, b, c)));
 
 	}
 	
 	default <T> Container<E, List<T>> sequence( List<Container<E, T>> l ) {
 
-		return $_notYetImpl();
+		return sequence(l.iterator());
 
 	}
 	
 	default <T> Container<E, List<T>> sequence( Iterator<Container<E, T>> i ) {
 
-		return $_notYetImpl();
+		//Condicion de finalizacion de recursividad
+		if(!i.hasNext()) {
+			System.out.println("Creando la lista vacia!!");
+			return pure(new LinkedList<T>());
+		} else {
+			//Llamada recursiva
+			return map2(i.next(), sequence(i), (current, list) -> {
+				System.out.println("Metiendo el elemento " + current + " en la lista " + list);
+				((LinkedList<T>) list).addFirst(current);
+				return list;
+			});
+		}
 
 	}
 	
