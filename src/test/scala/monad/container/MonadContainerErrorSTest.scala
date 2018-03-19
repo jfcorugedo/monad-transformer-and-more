@@ -11,7 +11,24 @@ import org.junit.Assert._
 
 import MonadContainerErrorS.ContainerError
 
-class MonadContainerErrorSTest {
+/**
+ * <pre>
+ * Monad laws from 
+ * 
+ * [Monads for functional programming](http://homepages.inf.ed.ac.uk/wadler/papers/marktoberdorf/baastad.pdf)
+ * 
+ * A binary operation with left and right unit that is associative is called a 
+ * monoid.
+ * 
+ * A monad differs from a monoid in that the right operand involves a binding
+ * operation.
+ * 
+ * </pre>
+ * 
+ * @author miguel.esteban@logicaalternativa.com
+ *
+ */
+ class MonadContainerErrorSTest {
   
     val M = MonadContainerErrorS()
     
@@ -25,7 +42,147 @@ class MonadContainerErrorSTest {
         val cont : ContainerError[String] = pure( expected )
         
         assertEquals( expected, cont.getValue )
-      
+    }
+    
+    /**
+     * Left unit <pre>
+     * 
+     *  1) Compute the value a
+     *  2) bind b to the result
+     *  3) compute n
+     *  
+     *  The result is the same as n with value a substituted for variable b
+     *  
+     *  unit a * λb. n = n[a/b]
+     *  
+     *  </pre>
+     * @throws Exception
+     */
+    @Test
+    def lawLeftUnit = {
+        
+        val contB = pure("b")
+        val contBerror : Container[Error, String] = raiseError( new MyError ( "errorB" ) )
+        
+        lawLeftUnitExec( contB );
+        lawLeftUnitExec( contBerror );
+        
+    }    
+    
+    private def lawLeftUnitExec( contB : Container[Error, String] ) = {
+        
+        val contA = pure("a")
+        
+        val contBB = flatMap[String, String](
+                    contA, 
+                    a => contB
+                )
+        
+        assertEquals( contBB.getValue, contB.getValue )
+        
+    }
+    
+     /**
+     * Right unit.<pre>
+     * 
+     *  1) Compute m,
+     *  2) bind the result to a
+     *  3) return a.
+     *   
+     *  The result is the same as 
+     *  m * λa. unit a = 
+     *  
+     * </pre>
+     * @throws Exception
+     */
+    @Test
+    def lawRightUnit = {
+
+        val contA = pure( "a" )
+        val contAerror : Container[Error, String] = raiseError( new MyError ( "errorA" ) )
+        
+        lawRightUnitExec( contA )
+        lawRightUnitExec( contAerror )
+        
+    }
+    
+    private def lawRightUnitExec( contA : Container[Error,String] ) = {
+
+        
+        val contAA = flatMap[String, String](
+                        contA, 
+                        a => pure( a )
+                    )
+
+        assertEquals( contAA, contA )
+        
+    }
+    
+    
+    /**
+     * Associative. <pre>
+     * 
+     *  1) Compute m
+     *  2) bind the result to a
+     *  3) compute n, bind the result to b
+     *  4) compute o.
+     *  
+     *   The order of parentheses in such a computation is irrelevant.
+     *    m * (λa. n * λb. o) = (m * λa. n) * λb. o
+     *        
+     * </pre>
+     * @throws Exception
+     */    
+    @Test
+    def lawAsociative = {
+        
+        val contA = pure( "a" )
+        val contB = pure( "b" )
+        val contC = pure( "c" )
+
+        val contAerror : Container[Error, String] = raiseError( new MyError ( "errorA" ) )
+        val contBerror : Container[Error, String] = raiseError( new MyError ( "errorB" ) )
+        val contCerror : Container[Error, String] = raiseError( new MyError ( "errorC" ) )
+
+        lawAsociativeExec(contA, contB, contC);
+        lawAsociativeExec(contA, contB, contCerror);
+
+        lawAsociativeExec(contA, contBerror, contC);
+        lawAsociativeExec(contA, contBerror, contCerror);
+
+        lawAsociativeExec(contAerror, contB, contC);
+        lawAsociativeExec(contAerror, contB, contCerror);
+
+        lawAsociativeExec(contAerror, contBerror, contC);
+        lawAsociativeExec(contAerror, contBerror, contCerror);
+        
+    }
+    
+    private def lawAsociativeExec( contA : Container[Error, String], contB : Container[Error, String], contC : Container[Error, String] ) = {
+
+        
+        val contBC = flatMap[String, String](
+                contB,
+                b => contC
+                )
+
+        val contA_BC = flatMap[String, String](
+                contA, 
+                a => contBC 
+                )
+
+        val contAB = flatMap[String, String](
+                contA,
+                a => contB
+                )
+
+        val contAB_C = flatMap[String, String](
+                contAB, 
+                ab => contC
+                )
+        
+        assertEquals( contA_BC.getValue, contAB_C.getValue )
+        
     }
   
     @Test
@@ -52,8 +209,7 @@ class MonadContainerErrorSTest {
         
         assertEquals( expectedError, res.getError.getDescription )        
       
-    }   
-    
+    }
   
     @Test
     def flatMapException : Unit = {
