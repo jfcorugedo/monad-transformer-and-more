@@ -1,16 +1,25 @@
 package com.logicaalternativa.monadtransformerandmore.business.impl;
 
-import static com.logicaalternativa.monadtransformerandmore.util.TDD.$_notYetImpl;
+import static com.logicaalternativa.monadtransformerandmore.monad.MonadContainerWrapper.wrap;
 
+import com.logicaalternativa.monadtransformerandmore.bean.Chapter;
+import com.logicaalternativa.monadtransformerandmore.bean.Sales;
 import com.logicaalternativa.monadtransformerandmore.bean.Summary;
 import com.logicaalternativa.monadtransformerandmore.business.SrvSummaryContainer;
 import com.logicaalternativa.monadtransformerandmore.container.Container;
+import com.logicaalternativa.monadtransformerandmore.errors.impl.MyError;
 import com.logicaalternativa.monadtransformerandmore.monad.MonadContainer;
 import com.logicaalternativa.monadtransformerandmore.service.container.ServiceAuthorContainer;
 import com.logicaalternativa.monadtransformerandmore.service.container.ServiceBookContainer;
 import com.logicaalternativa.monadtransformerandmore.service.container.ServiceChapterContainer;
 import com.logicaalternativa.monadtransformerandmore.service.container.ServiceSalesContainer;
 import com.logicaalternativa.monadtransformerandmore.errors.Error;
+import scala.concurrent.Future;
+import scala.util.Either;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SrvSummaryContainerImpl implements SrvSummaryContainer<Error> {
 	
@@ -38,9 +47,26 @@ public class SrvSummaryContainerImpl implements SrvSummaryContainer<Error> {
 
 	@Override
 	public Container<Error, Summary> getSummary(Integer idBook) {
+
+		Container<Error, Optional<Sales>> salesF = wrap(this.srvSales.getSales(idBook), m)
+				.map(sales -> Optional.of(sales))
+				.recover(error -> Optional.empty()).value();
+
+
+		return wrap(m.flatMap2(salesF, this.srvBook.getBook(idBook),
+				(sales, book) ->
+						m.map2(
+								this.srvAuthor.getAuthor(book.getIdAuthor()),
+								m.sequence(getChapters(book.getChapters())),
+								(author, chapters) -> new Summary(book, chapters, sales, author))
+		), m)
+				.recoverWith( e -> m.raiseError(new MyError("It is impossible to get book summary")))
+				.value();
 		
-		return $_notYetImpl();
-		
+	}
+
+	private List<Container<Error, Chapter>> getChapters(List<Long> chapters) {
+		return chapters.stream().map(chId -> this.srvChapter.getChapter(chId)).collect(Collectors.toList());
 	}
 
 }

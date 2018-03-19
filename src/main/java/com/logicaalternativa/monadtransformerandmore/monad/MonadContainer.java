@@ -94,12 +94,10 @@ public interface MonadContainer<E> {
 
 		//Condicion de finalizacion de recursividad
 		if(!i.hasNext()) {
-			System.out.println("Creando la lista vacia!!");
 			return pure(new LinkedList<T>());
 		} else {
 			//Llamada recursiva
 			return map2(i.next(), sequence(i), (current, list) -> {
-				System.out.println("Metiendo el elemento " + current + " en la lista " + list);
 				((LinkedList<T>) list).addFirst(current);
 				return list;
 			});
