@@ -48,83 +48,9 @@ public class SrvSummaryFutureEitherImpl implements SrvSummaryFutureEither<Error>
 	public Future<Either<Error, Summary>> getSummary(Integer idBook) {
 
 
+		//TODO: Code the logic to build a Future<Either<Error, Summary>>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		Future<Either<Error, Optional<Sales>>> salesF = wrap(this.srvSales.getSales(idBook), m)
-				.map(sales -> Optional.of(sales))
-				.recover(error -> Optional.empty()).value();
-
-
-		return wrap(m.flatMap2(salesF, this.srvBook.getBook(idBook),
-					(sales, book) ->
-							m.map2(
-								this.srvAuthor.getAuthor(book.getIdAuthor()),
-								m.sequence(getChapters(book.getChapters())),
-								(author, chapters) -> new Summary(book, chapters, sales, author))
-		), m)
-		.recoverWith( e -> m.raiseError(new MyError("It is impossible to get book summary")))
-		.value();
-
-
-
-		/*
-		Another way:
-
-		return m.flatMap2(salesF, this.srvBook.getBook(idBook),
-					(sales, book) -> {
-						return m.map2(this.srvAuthor.getAuthor(book.getIdAuthor()), m.sequence(getChapters(book.getChapters())), (author, chapters) -> {
-							return new Summary(book, chapters, sales, author);
-						});
-					}
-		);
-
-		 */
-		/*
-		Another way:
-		return wrap(this.srvBook.getBook(idBook), m)
-				.flatMap(book -> wrap(
-						m.sequence(
-								book.getChapters().stream().map(chId -> this.srvChapter.getChapter(chId)).collect(Collectors.toList())
-						)
-						, m).flatMap(chapters ->  wrap( this.srvAuthor.getAuthor(book.getIdAuthor()), m).map(
-										author -> new Summary(book, chapters, sales, author)
-							).value()
-						).value()
-				).value();
-		 */
-
-
+		return null;
 	}
 
 	private List<Future<Either<Error, Chapter>>> getChapters(List<Long> chapters) {
