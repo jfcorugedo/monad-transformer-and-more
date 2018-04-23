@@ -48,6 +48,39 @@ public class SrvSummaryFutureEitherImpl implements SrvSummaryFutureEither<Error>
 	public Future<Either<Error, Summary>> getSummary(Integer idBook) {
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		Future<Either<Error, Optional<Sales>>> salesF = wrap(this.srvSales.getSales(idBook), m)
 				.map(sales -> Optional.of(sales))
 				.recover(error -> Optional.empty()).value();
@@ -62,6 +95,8 @@ public class SrvSummaryFutureEitherImpl implements SrvSummaryFutureEither<Error>
 		), m)
 		.recoverWith( e -> m.raiseError(new MyError("It is impossible to get book summary")))
 		.value();
+
+
 
 		/*
 		Another way:

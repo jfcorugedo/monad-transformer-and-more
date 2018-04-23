@@ -55,6 +55,44 @@ public class SrvSummaryFutureEitherOLDImpl implements SrvSummaryFutureEither<Err
 		final ExecutionContext ec = ExecutionContexts.global();
 
 
+		//TODO: Get Summary object
+
+
+
+		return null;
+
+
+
+
+		/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		final Future<Either<Error, Book>> bookF = srvBook.getBook( idBook ).recover(
 				recoverF( e -> new Left<>( new MyError( e.getMessage() ) ) )
 				,ec);
@@ -98,6 +136,7 @@ public class SrvSummaryFutureEitherOLDImpl implements SrvSummaryFutureEither<Err
 
 				,ec);
 		return res;
+		*/
 	}
 
 	/**
@@ -106,7 +145,7 @@ public class SrvSummaryFutureEitherOLDImpl implements SrvSummaryFutureEither<Err
 	 * @return
 	 */
 
-	private Future<Either<Error, Author>> getAuthor(
+	private Future<Either<Error, Author>> getAuthorOld(
 			Either<Error, Book> eitherBook) {
 
 		if( eitherBook.isLeft() ) {
@@ -130,7 +169,7 @@ public class SrvSummaryFutureEitherOLDImpl implements SrvSummaryFutureEither<Err
 	 * @return
 	 */
 
-	private Future<Either<Error, List<Chapter>>> getChapters(
+	private Future<Either<Error, List<Chapter>>> getChaptersOld(
 			final ExecutionContext ec, Either<Error, Book> eitherBook) {
 
 		if ( eitherBook.isLeft() ) {
@@ -184,7 +223,7 @@ public class SrvSummaryFutureEitherOLDImpl implements SrvSummaryFutureEither<Err
   * @return
   */
 
-	private Either<Error, Summary> createSummary(
+	private Either<Error, Summary> createSummaryOld(
 			Tuple2<Either<Error, Book>, Either<Error, Sales>> bookAndSales,
 			Either<Error, List<Chapter>> listChapterE,
 			Either<Error, Author> authorE) {

@@ -1,14 +1,11 @@
 package com.logicaalternativa.monadtransformerandmore.monad;
 
-import static com.logicaalternativa.monadtransformerandmore.util.TDD.$_notYetImpl;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import akka.dispatch.Futures;
 import scala.concurrent.Future;
 import scala.util.Either;
 
