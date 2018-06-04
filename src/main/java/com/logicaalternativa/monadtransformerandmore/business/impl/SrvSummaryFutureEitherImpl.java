@@ -52,8 +52,4 @@ public class SrvSummaryFutureEitherImpl implements SrvSummaryFutureEither<Error>
 
 		return null;
 	}
-
-	private List<Future<Either<Error, Chapter>>> getChapters(List<Long> chapters) {
-		return chapters.stream().map(chId -> this.srvChapter.getChapter(chId)).collect(Collectors.toList());
-	}
 }
