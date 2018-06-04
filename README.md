@@ -65,7 +65,7 @@ Recuerda que deberás tener en cuenta el control de errores.
 
  ## Fork github
  - Registrate con tu usuario en **github** 
- - Ve a [https://github.com/logicaalternativa/monad-transformer-and-more](https://github.com/logicaalternativa/monad-transformer-and-more)
+ - Ve a [https://github.com/jfcorugedo/monad-transformer-and-more](https://github.com/logicaalternativa/monad-transformer-and-more)
  - Haz un Fork del repositorio
  
  ## Clonar el repo en tu máquina
@@ -77,7 +77,7 @@ Recuerda que deberás tener en cuenta el control de errores.
   
   - Añade el repositorio del workshop como remoto
   
-            git remote add upstream https://github.com/logicaalternativa/monad-transformer-and-more.git
+            git remote add upstream https://github.com/jfcorugedo/monad-transformer-and-more.git
   
 ## Mantener tu rama y repo actualizadas
   
