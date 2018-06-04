@@ -56,13 +56,11 @@ public class SrvSummaryFutureEitherImpl implements SrvSummaryFutureEither<Error>
 		Future<Either<Error, List<Chapter>>> chapters = wrap(book, m).flatMap(b -> m.sequence(getChapters(b.getChapters()))).value();
 
 		Future<Either<Error, Summary>> summary = wrap(book, m)
-				.flatMap(
-						b -> m.map3(
+				.map4(
 								sales,
 								author,
 								chapters,
-								(s, a, c) -> new Summary(b, c, s, a)
-						)
+								(b, s, a, c) -> new Summary(b, c, s, a)
 				)
 				.recoverWith(error -> m.raiseError(new MyError("It is impossible to get book summary"))).value();
 
@@ -95,6 +93,21 @@ public class SrvSummaryFutureEitherImpl implements SrvSummaryFutureEither<Error>
 		//					).value()
 		//				).value()
 		//		).value();
+
+
+		// Future<Either<Error, Summary>> summary = wrap(book, m)
+		//		.flatMap(
+		//				b -> m.map3(
+		//						sales,
+		//						author,
+		//						chapters,
+		//						(s, a, c) -> new Summary(b, c, s, a)
+		//				)
+		//		)
+		//		.recoverWith(error -> m.raiseError(new MyError("It is impossible to get book summary"))).value();
+
+
+
 
 		return summary;
 	}
